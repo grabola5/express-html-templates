@@ -1,7 +1,7 @@
 var express = require('express');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var confih = require('./config');
+var config = require('./config');
 var app = express();
 var googleProfile = {};
 
@@ -12,7 +12,7 @@ app.use(passport.session());
 
 //serializowanie logujących się użytkowników - aby sesja logowania była utrzymana
 passport.serializeUser(function(user, done) {
-	done(null, obj);
+	done(null, user);
 });
 passport.deserializeUser(function(obj, done) {
 	done(null, obj);
@@ -32,21 +32,24 @@ passport.use(new GoogleStrategy({
 	}
 	));
 
-
-/*
-app.get('/', function (req,res) {
-	res.render('main');
+app.get('/', function(req,res) {
+	res.render('index', {user: req.user});
 });
 
-app.get('/auth/google', function(req, res) {
-	res.render('google');
+app.get('/logged', function(req,res) {
+	res.render('logged', {user: googleProfile});
 });
 
-app.get('/news', function(req, res) {
-	res.sendFile('C:/projekty/17.6-express_html_templates/assets/news.jpg')
-	}); */
+//Passport routes
+app.get('/auth/google',
+passport.authenticate('google', {
+scope: ['profile', 'email']
+}));
+
+app.get('/auth/google/callback',
+passport.authenticate('google', {
+	successRedirect:'/logged',
+	failureRedicrect: '/'
+}));
 
 app.listen(3000);
-app.use(function (req, res, next) {
-    res.status(404).send('Wybacz, nie mogliśmy odnaleźć tego, czego żądasz!')
-});
