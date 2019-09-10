@@ -37,7 +37,7 @@ app.get('/', function(req,res) {
 });
 
 app.get('/logged', function(req,res) {
-	res.render('logged', {user: googleProfile});
+	res.sendFile('C:/projekty/17.6-express_html_templates/assets/news.jpg', {user: googleProfile});
 });
 
 //Passport routes
